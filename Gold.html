@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>— GOLD —</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; }
+    *, *::before, *::after { cursor: none !important; }
+
+    /* ── Cursor ── */
+    .cursor-dot {
+      position: fixed; pointer-events: none; z-index: 99999;
+      width: 12px; height: 12px; background: #fff;
+      border-radius: 50%; transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(255,255,255,0.85);
+    }
+    .cursor-ring {
+      position: fixed; pointer-events: none; z-index: 99998;
+      width: 32px; height: 32px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50%; transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    .cursor-star {
+      position: fixed; pointer-events: none; z-index: 99997;
+      font-size: 16px; transform: translate(-50%, -130%);
+      animation: starSpin 3s linear infinite;
+    }
+    @keyframes starSpin { to { transform: translate(-50%, -130%) rotate(360deg); } }
+    body.clicking .cursor-dot { width: 18px; height: 18px; background: #ddd; }
+    body.clicking .cursor-ring { width: 42px; height: 42px; border-color: #fff; }
+
+    body {
+      background: radial-gradient(circle at 20% 0%, #111 0%, #161616 45%, #0d0d0d 100%);
+      font-family: 'Nunito', sans-serif; color: #e5e5e5; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 8px;
+      border: 2px solid rgba(255,255,255,0.08); border-radius: 26px;
+      pointer-events: none; z-index: 9000;
+      box-shadow: inset 0 0 50px rgba(255,255,255,0.08);
+    }
+    .sparkle {
+      position: fixed; width: 5px; height: 5px; background: #fff;
+      border-radius: 50%; pointer-events: none; z-index: 9999;
+      box-shadow: 0 0 8px rgba(255,255,255,0.35); animation: sparkleAnim 0.8s linear forwards;
+    }
+    @keyframes sparkleAnim { to { transform: scale(0) translateY(15px); opacity: 0; } }
+    .petal { position: fixed; font-size: 14px; pointer-events: none; animation: petalFall 7s linear infinite; top: -40px; z-index: 0; color: #fff; }
+    @keyframes petalFall { to { transform: translateY(110vh) rotate(540deg); opacity: 0; } }
+
+    /* ── Banner ── */
+    .service-banner {
+      background: linear-gradient(90deg, #111, #333, #111);
+      background-size: 200% auto; animation: bannerShift 4s linear infinite;
+      color: #fff; text-align: center; padding: 6px 20px;
+      font-size: 0.72rem; letter-spacing: 2px; font-weight: 700; text-transform: uppercase;
+      z-index: 100; position: relative;
+    }
+    @keyframes bannerShift { to { background-position: 200% center; } }
+
+    .wrapper { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 10; }
+
+    /* ── Profile Header ── */
+    .profile-header {
+      background: rgba(255,255,255,0.05); backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255,255,255,0.08); border-radius: 24px;
+      padding: 28px 28px 20px; display: flex; gap: 28px; align-items: flex-start;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.35); margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .avatar-wrap { position: relative; flex-shrink: 0; }
+    /* ── AVATAR GOLD ── */
+.avatar-ring {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #ffd700,
+    #ffcc00,
+    #fff3b0,
+    #d4af37,
+    #ffd700
+  );
+  padding: 4px;
+  animation: rotateRing 6s linear infinite;
+  position: relative;
+  box-shadow: 0 0 25px rgba(255,215,0,0.4);
+}
+
+.avatar-ring::after {
+  content: '👑';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 26px;
+  text-shadow: 0 0 10px rgba(255,215,0,0.8);
+  animation: crownFloat 2.5s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}
+    @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .avatar-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 4px solid #fff; }
+    .online-dot { position: absolute; bottom: 6px; right: 6px; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid #333; box-shadow: 0 0 12px rgba(255,255,255,0.35); }
+    .profile-info { flex: 1; min-width: 200px; }
+    .profile-name { font-family: 'Fredoka One', cursive; font-size: 1.9rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.45), 0 0 20px rgba(255,255,255,0.08); margin-bottom: 4px; }
+    .profile-handle { font-size: 0.78rem; color: #ccc; letter-spacing: 1px; margin-bottom: 10px; font-weight: 700; }
+    .profile-bio { font-size: 0.88rem; color: #c9c9c9; line-height: 1.6; margin-bottom: 14px; }
+    .profile-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ptag { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 50px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #ddd; }
+    .ptag.pink { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); color: #fff; }
+    .ptag.cyan { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); color: #fff; }
+    .social-links { display: flex; gap: 10px; margin-top: 16px; }
+    .social-btn { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; text-decoration: none; transition: transform 0.2s, background 0.2s, border-color 0.2s; }
+    .social-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+    .social-icon { width: 18px; height: 18px; fill: currentColor; }
+    .profile-stats { display: flex; gap: 24px; margin-left: auto; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+    .stat-box { text-align: center; }
+    .stat-num { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: #fff; display: block; }
+    .stat-label { font-size: 0.65rem; color: #bbb; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+
+    /* ── Tab Nav ── */
+    .tab-nav {
+      background: rgba(255,255,255,0.06); backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.08); border-radius: 18px;
+      padding: 8px; display: flex; gap: 4px; margin-bottom: 18px;
+      overflow-x: auto; scrollbar-width: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn { flex: 1; min-width: 80px; padding: 9px 14px; border-radius: 12px; border: none; background: transparent; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 700; color: #d4d4d4; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .tab-btn.active { background: linear-gradient(135deg, #444, #111); color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .content-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(14px); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.25); margin-bottom: 16px; }
+    .card-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #fff; margin-bottom: 16px; }
+    .about-text { font-size: 0.9rem; line-height: 1.8; color: #ccc; }
+    .about-text p { margin-bottom: 12px; }
+    .about-text strong { color: #fff; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .info-row { display: flex; flex-direction: column; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 14px; }
+    .info-key { font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: #bbb; font-weight: 700; }
+    .info-val { font-size: 0.85rem; color: #e5e5e5; font-weight: 700; margin-top: 2px; }
+    .xat-card { background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 20px; text-align: center; overflow: hidden; }
+    .xat-card h3 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #fff; margin-bottom: 8px; }
+    .xat-card p { font-size: 0.82rem; color: #ccc; line-height: 1.7; }
+    .xat-animate { display:flex; flex-direction:column; align-items:center; gap:14px; }
+    .pulse-ring { width: 100%; max-width: 280px; height: 4px; border-radius: 999px; background: rgba(255,255,255,0.08); position: relative; overflow: hidden; }
+    .pulse-ring::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transform: translateX(-120%); animation: pulseMove 2.2s linear infinite; }
+    .neon-text { font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: 0.4px; text-shadow: 0 0 12px rgba(255,255,255,0.28), 0 0 24px rgba(255,255,255,0.12); animation: glowPulseText 2.4s ease-in-out infinite alternate; }
+    .tiny-note { font-size: 0.78rem; color: #ccc; line-height: 1.6; }
+    @keyframes pulseMove { to { transform: translateX(120%); } }
+    @keyframes glowPulseText { from { text-shadow: 0 0 8px rgba(255,255,255,0.18), 0 0 18px rgba(255,255,255,0.08); } to { text-shadow: 0 0 18px rgba(255,255,255,0.38), 0 0 32px rgba(255,255,255,0.18); } }
+
+    /* ── Amigos ── */
+    .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
+    .friend-card { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 16px 10px 12px; text-align: center; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; text-decoration: none; display: block; color: inherit; }
+    .friend-card:hover { transform: translateY(-5px); box-shadow: 0 8px 26px rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); }
+    .friend-avatar-wrap { position: relative; width: 68px; margin: 0 auto 10px; }
+    .friend-initial { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: #fff; border: 3px solid rgba(255,255,255,0.18); }
+    .friend-online { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid #111; }
+    .friend-online.on { background: #fff; box-shadow: 0 0 6px rgba(255,255,255,0.8); }
+    .friend-name { font-size: 0.78rem; font-weight: 900; color: #f5f5f5; margin-bottom: 2px; }
+    .friend-id { font-size: 0.62rem; color: #bbb; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .friend-status { font-size: 0.66rem; color: #ccc; }
+    .friend-xat-badge { display: inline-block; margin-top: 6px; font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #ddd; border-radius: 50px; padding: 2px 8px; }
+
+    /* ── Galeria ── */
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .gallery-item { border-radius: 14px; overflow: hidden; border: 2px solid rgba(255,255,255,0.08); transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; position: relative; background: #111; }
+    .gallery-item:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); }
+    .gallery-item img { width: 100%; height: 160px; object-fit: cover; display: block; filter: grayscale(100%); }
+    .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 20px 10px 8px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+
+    /* ══ MUSIC PLAYER ══ */
+    .music-app {
+      background: linear-gradient(145deg, #0d0d0d 0%, #121212 35%, #0f0f0f 100%);
+      border-radius: 28px; overflow: hidden;
+      box-shadow: 0 28px 70px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      padding: 24px;
+    }
+    .music-app::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 15% 10%, rgba(255,255,255,0.08) 0%, transparent 30%), radial-gradient(circle at 90% 20%, rgba(255,255,255,0.06) 0%, transparent 28%);
+      pointer-events: none;
+    }
+    .music-player-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .music-player-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.player-panel {
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.04);
+  border-radius: 26px;
+}
+
+/* buton play glow */
+.ctrl-play {
+  background: linear-gradient(135deg,#ffd700,#d4af37);
+  color: #000;
+  box-shadow: 0 0 20px rgba(255,215,0,0.4);
+}
+
+.ctrl-play:hover {
+  transform: scale(1.1);
+}
+
+/* progress bar gold */
+.progress-fill {
+  background: linear-gradient(90deg,#ffd700,#ffcc00);
+}
+
+.tracklist {
+  scrollbar-width: none;
+}
+.tracklist::-webkit-scrollbar {
+  display: none;
+}
+    .album-section {
+      padding: 24px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .album-art-wrap { width: 100%; max-width: 240px; height: 240px; border-radius: 28px; overflow: hidden; position: relative; }
+    .album-glow { position: absolute; inset: 0; background: radial-gradient(circle, rgba(255,255,255,0.14), transparent 55%); mix-blend-mode: screen; pointer-events: none; }
+    .album-art { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .album-info { text-align: center; }
+    .album-info .song-title { font-size: 1.25rem; margin-bottom: 6px; }
+    .album-info .song-artist { font-size: 0.85rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 1px; }
+    .playlist-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 20px; }
+    .playlist-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #fff; margin-bottom: 14px; }
+    .tracklist { display: grid; gap: 8px; max-height: 300px; overflow: auto; padding-right: 4px; }
+    .tracklist::-webkit-scrollbar { width: 6px; }
+    .tracklist::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+    .track-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .track-item:last-child { border-bottom: none; }
+    .track-meta { display: flex; align-items: center; gap: 10px; }
+    .track-number { font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+    .track-name { font-size: 0.92rem; font-weight: 700; color: #fff; }
+    .track-duration { font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+    .track-item.active .track-name { color: #1ed760; }
+    .player-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 28px; display: grid; gap: 20px; }
+    .player-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .player-badge { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.8px; color: #1ed760; font-weight: 800; }
+    .player-subtitle { color: #ccc; letter-spacing: 0.8px; font-size: 0.82rem; }
+    .song-actions { justify-content: flex-start; }
+    .action-btn { width: 46px; height: 46px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 50%; color: rgba(255,255,255,0.7); }
+    .action-btn:hover { color: #fff; transform: scale(1.06); }
+    .ctrl-play { width: 64px; height: 64px; }
+    .progress-section { padding: 0; }
+    .progress-bar-wrap { background: rgba(255,255,255,0.08); }
+    .progress-fill { background: linear-gradient(90deg, #1ed760, rgba(30, 215, 96, 0.85)); }
+    .time-row { margin-top: 6px; }
+    .time-label { color: rgba(255,255,255,0.55); }
+    .controls-section { justify-content: center; }
+    .volume-section { padding: 0; justify-content: flex-end; }
+    .player-status { text-align: left; padding: 0; }
+    .status-pill { background: rgba(30,215,96,0.12); border-color: rgba(30,215,96,0.25); color: #b2f7c8; }
+
+    /* Footer */
+
+    /* Footer */
+    .profile-footer { text-align: center; padding: 20px; font-size: 0.72rem; color: #bbb; letter-spacing: 1px; }
+    .profile-footer span { color: #fff; font-weight: 700; }
+
+    @media (max-width: 600px) {
+      .profile-header { flex-direction: column; align-items: center; text-align: center; }
+      .profile-stats { margin-left: 0; justify-content: center; }
+      .profile-tags { justify-content: center; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tab-btn { font-size: 0.72rem; padding: 8px 10px; }
+      .album-section { padding: 28px 24px 0; }
+      .album-art-wrap { width: 160px; height: 160px; }
+      .album-art { width: 160px; height: 160px; }
+      .controls-section { padding: 16px 24px 24px; }
+      .progress-section, .volume-section, .player-status { padding-left: 24px; padding-right: 24px; }
+    }
+	
+	
+	/* ── LIGHTBOX ── */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  backdrop-filter: blur(6px);
+}
+
+#lightbox img {
+  max-width: 92%;
+  max-height: 92%;
+  border-radius: 16px;
+  box-shadow: 0 0 60px rgba(255,255,255,0.15);
+  animation: zoomIn 0.25s ease;
+}
+
+#lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 34px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.75); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* hover fara grayscale */
+.gallery-item:hover img {
+  filter: grayscale(0%);
+}
+/* ── HEADER UPGRADE ── */
+.profile-header {
+  position: relative;
+  overflow: hidden;
+}
+
+/* glow subtil pe background */
+.profile-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255,215,0,0.12), transparent 40%);
+  pointer-events: none;
+}
+
+/* VIP BADGE */
+.vip-badge {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg,#ffd700,#d4af37);
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 50px;
+  letter-spacing: 1px;
+  box-shadow: 0 0 12px rgba(255,215,0,0.6);
+}
+
+/* NAME GOLD TEXT */
+.profile-name {
+  font-size: 2rem;
+  background: linear-gradient(90deg,#fff,#ffd700,#fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255,215,0,0.2);
+}
+
+/* HANDLE */
+.profile-handle {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+/* BIO mai stylish */
+.profile-bio {
+  font-size: 0.9rem;
+  color: #ddd;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+/* TAGS UPGRADE */
+.ptag {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 4px 12px;
+  border-radius: 50px;
+  transition: all 0.25s ease;
+}
+
+.ptag:hover {
+  background: rgba(255,215,0,0.15);
+  border-color: rgba(255,215,0,0.4);
+  transform: translateY(-2px);
+}
+
+/* TAG GOLD SPECIAL */
+.ptag.gold {
+  background: linear-gradient(135deg,#ffd700,#d4af37);
+  color: #000;
+  border: none;
+  font-weight: 900;
+}
+.avatar-wrap:hover .avatar-ring {
+  box-shadow: 0 0 35px rgba(255,215,0,0.6);
+}
+  </style>
+</head>
+<body>
+<div id="lightbox">
+  <span id="lightbox-close">&times;</span>
+  <img id="lightbox-img">
+</div>
+  <!-- Cursor -->
+  <div class="cursor-dot"  id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-star" id="cursorStar">✦</div>
+
+
+  <div class="wrapper">
+
+<div class="profile-header">
+  
+  <div class="avatar-wrap">
+    <div class="avatar-ring">
+      <img src="https://xatimg.com/image/VGoeHxwAx6jt.jpg">
+    </div>
+    <div class="online-dot"></div>
+    <div class="vip-badge">GOLD</div>
+  </div>
+
+  <div class="profile-info">
+    <div class="profile-name">ᴬᶠᵏ ˣᴳᵒˡᵈ</div>
+    <div class="profile-handle">@xGold • Premium User</div>
+
+    <div class="profile-bio">
+      ✦ Living fast • Making money • Loving music  
+    </div>
+
+    <div class="profile-tags">
+      <span class="ptag">🚗 Cars</span>
+      <span class="ptag gold">🎧 Music</span>
+      <span class="ptag">💎 Luxury</span>
+      <span class="ptag">💰 Money</span>
+    </div>
+  </div>
+
+</div>
+
+    <!-- Tabs -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" onclick="showTab('inicio', this)">Home</button>
+      <button class="tab-btn" onclick="showTab('amigos', this)">Friends</button>
+      <button class="tab-btn" onclick="showTab('galeria', this)">Galeria</button>
+      <button class="tab-btn" onclick="showTab('musica', this)">Music</button>
+      <button class="tab-btn" onclick="showTab('sobre', this)">About Me</button>
+    </nav>
+
+    <!-- INICIO -->
+    <div class="tab-content active" id="tab-inicio">
+      <div class="content-card">
+        <div class="card-title">Welcome Here.</div>
+        <div class="about-text" style="text-align:center; font-style:italic; color:#fff; margin-bottom:16px;">
+          <p>“Dream as if you were going to live forever”</p>
+        </div>
+        <div class="about-text">
+          <p>Hi! i'm <strong>ˣᴳᵒˡᵈ</strong>, </p>
+          <p></p>
+          <p></p>
+        </div>
+        <div class="info-grid">
+          <div class="info-row"><span class="info-key">Community</span><span class="info-val">Music and Games</span></div>
+          <div class="info-row"><span class="info-key">Friends</span><span class="info-val">4 Assets</span></div>
+          <div class="info-row"><span class="info-key">Chat</span><span class="info-val">xat.com/Sociale</span></div>
+        </div>
+      </div>
+      <div class="xat-card">
+        <h3>Come and enjoy good music and company</h3>
+        <p>Join fun games and conversations in our community chat.<br><br><strong>Enter now at xat.com/Sociale</strong></p>
+        <a href="https://xat.com/Sociale" target="_blank" style="display:inline-block; margin-top:16px; padding:8px 16px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; text-decoration:none; font-weight:700; font-size:0.85rem; text-align:center;">Come on Chat</a>
+        <p style="margin-top:12px; font-size:0.82rem; color:#ccc;">Join our community chat at <a href="https://xat.com/Sociale" target="_blank" style="color:#fff; text-decoration:underline;">xat.com/Sociale</a>. It's a chat room for music and games.</p>
+      </div>
+    </div>
+
+    <!-- AMIGOS -->
+<div class="tab-content" id="tab-amigos">
+  <div class="content-card">
+    <div class="card-title">Friends 
+      <span style="font-size:0.8rem;font-family:'Nunito';font-weight:700;color:#bbb">(5)</span>
+    </div>
+
+    <div class="friends-grid">
+
+      <!-- xEmma -->
+      <a class="friend-card" href="https://xat.me/1212120" target="_blank" rel="noopener">
+        <div class="friend-avatar-wrap">
+          <div class="friend-initial" style="background:linear-gradient(135deg,#e60023,#111)">E</div>
+          <span class="friend-online on"></span>
+        </div>
+        <div class="friend-name">xEmma</div>
+        <div class="friend-id">ID: 1212120</div>
+        <div class="friend-status">BFF</div>
+        <span class="friend-xat-badge">Sociale</span>
+      </a>
+	  
+	        <!-- Goat -->
+      <a class="friend-card" href="https://xat.me/15551" target="_blank" rel="noopener">
+        <div class="friend-avatar-wrap">
+          <div class="friend-initial" style="background:linear-gradient(135deg,#e60023,#111)">G</div>
+          <span class="friend-online on"></span>
+        </div>
+        <div class="friend-name">Goat</div>
+        <div class="friend-id">ID: 15551</div>
+        <div class="friend-status">Friend</div>
+        <span class="friend-xat-badge">Sociale</span>
+      </a>
+
+         
+
+	  
+      <!-- Mari -->
+      <a class="friend-card" href="https://xat.me/AFK1234567869" target="_blank" rel="noopener">
+        <div class="friend-avatar-wrap">
+          <div class="friend-initial" style="background:linear-gradient(135deg,#ff512f,#dd2476)">B</div>
+          <span class="friend-online on"></span>
+        </div>
+        <div class="friend-name">AFK1234567869 </div>
+        <div class="friend-id">ID: 1541033120</div>
+        <div class="friend-status">BFF</div>
+        <span class="friend-xat-badge">Sociale</span>
+      </a>
+	  
+	        
+
+    </div>
+  </div>
+</div>
+
+    <!-- GALERIA -->
+    <div class="tab-content" id="tab-galeria">
+      <div class="content-card">
+        <div class="card-title">Just Me</div>
+        <div class="gallery-grid">
+          <div class="gallery-item"><img src="https://xatimg.com/image/c4XGZbUvAqIY.jpg" alt="Omar 01"><div class="gallery-caption">xGold</div></div>
+          <div class="gallery-item"><img src="https://xatimg.com/image/ZJaaFUJOo6Yx.jpg" alt="Omar 02"><div class="gallery-caption">xGold</div></div>
+          <div class="gallery-item"><img src="https://xatimg.com/image/IhEaPT93pOZF.jpg" alt="Omar 03"><div class="gallery-caption">xGold</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUSICA -->
+    <div class="tab-content" id="tab-musica">
+      <div class="music-app">
+        <div class="music-player-grid">
+          <div>
+            <div class="album-section">
+              <div class="album-art-wrap">
+                <div class="album-glow"></div>
+                <img class="album-art" id="albumArt"
+                  src="https://i1.sndcdn.com/artworks-000000000000000-000000-t500x500.jpg"
+                  alt="Caratula">
+              </div>
+              <div class="album-info">
+                <div class="song-title" id="songTitle">Cargando...</div>
+                <div class="song-artist" id="songArtist">Minimal Beats</div>
+              </div>
+            </div>
+            <div class="playlist-card">
+              <div class="playlist-title">Lista de reproducción</div>
+              <div class="tracklist">
+                <div class="track-item active">
+                  <span class="track-meta"><span class="track-number">01</span><span class="track-name">Lose Control</span></span>
+                  <span class="track-duration">Teddy</span>
+                </div>
+                <div class="track-item">
+                  <span class="track-meta"><span class="track-number">02</span><span class="track-name">Ma supara geisha</span></span>
+                  <span class="track-duration">Iuly</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="player-panel">
+            <div class="player-meta">
+              <div>
+                <div class="player-badge">Reproductor</div>
+                <div class="player-subtitle">Listen to your selection like Spotify</div>
+              </div>
+              <div class="player-badge">Live</div>
+            </div>
+
+            <div class="song-actions">
+              <button class="action-btn" id="btnLike" onclick="toggleLike()" title="Me gusta">♡</button>
+              <button class="action-btn" title="Anadir a lista">+</button>
+              <button class="action-btn" title="Compartir">&#8599;</button>
+            </div>
+
+            <div class="progress-section">
+              <div class="progress-bar-wrap" id="progressWrap" onclick="seekTo(event)">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="time-row">
+                <span class="time-label" id="currentTime">0:00</span>
+                <span class="time-label" id="totalTime">0:00</span>
+              </div>
+            </div>
+
+            <div class="controls-section">
+              <button class="ctrl" id="btnShuffle" onclick="toggleShuffle()" title="Aleatorio">&#8652;</button>
+              <button class="ctrl" title="Anterior" onclick="scPrev()">&#9664;&#9664;</button>
+              <button class="ctrl-play" id="btnPlay" onclick="togglePlay()">&#9654;</button>
+              <button class="ctrl" title="Siguiente" onclick="scNext()">&#9654;&#9654;</button>
+              <button class="ctrl" id="btnRepeat" onclick="toggleRepeat()" title="Repetir">&#8635;</button>
+            </div>
+
+            <div class="volume-section">
+              <span class="vol-icon">&#128265;</span>
+              <input class="vol-slider" id="volSlider" type="range" min="0" max="100" value="70" oninput="setVolume(this.value)">
+              <span class="vol-icon">&#128266;</span>
+            </div>
+
+            <div class="player-status">
+              <span class="status-pill" id="statusPill">Ready to play</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOBRE MI -->
+    <div class="tab-content" id="tab-sobre">
+      <div class="content-card">
+        <div class="card-title">About Me — Gold</div>
+        <div class="about-text" style="text-align:center; font-style:italic; color:#fff;">
+          <p>dream as if you were going to live forever</p>
+        </div>
+        <div class="about-text" style="text-align:center; color:#fff; margin-top:20px; font-size:1.1rem;">
+          <p><img src="https://flagcdn.com/w320/ro.png" alt="Bandera Venezuela" style="width:50px; height:auto; vertical-align:middle; margin-right:10px;"> Romania</p>
+        </div>
+      </div>
+      <div class="xat-card">
+        <div class="xat-animate">
+          <div class="pulse-ring"></div>
+          <div class="neon-text">Make Money, Live WILD</div>
+          <div class="tiny-note">Be Humble, Be Strong.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      Conceput cu stil de <span>xEmma</span> · • Profiluri minimaliste în alb și negru
+    </div>
+  </div>
+
+  <!-- Reproductor HTML5 nativo (compatible con XAT Frames) -->
+  <audio id="audioPlayer" style="display:none;"></audio>
+
+  <script>
+    // ── Playlist de canciones ──
+const playlist = [
+  {
+    title: 'Lose Control',
+    artist: 'Teddy Swims',
+    duration: 225,
+    url: './Teddy Swims - Lose Control (Lyrics).mp3',
+    art: 'https://xatimg.com/image/wYwIQD26ycFf.png'
+  },
+  {
+    title: 'Ma supara Gheisa',
+    artist: 'Iuly Neamtu',
+    duration: 200,
+    url: './Iuly Neamtu - Ma supara Gheisa  Audio Oficial.mp3',
+    art: 'https://xatimg.com/image/xGbnyafj0WIy.png'
+  }
+];
+
+    let currentTrackIdx = 0;
+    let isPlaying = false;
+    let shuffleOn = false, repeatOn = false, liked = false;
+    const audio = document.getElementById('audioPlayer');
+
+    // ── Tabs ──
+    function showTab(name, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ── Cursor ──
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    const star = document.getElementById('cursorStar');
+    let mx = 0, my = 0, rx = 0, ry = 0, lastSparkle = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
+      star.style.left = mx + 'px'; star.style.top = my + 'px';
+      const now = Date.now();
+      if (now - lastSparkle > 60) {
+        lastSparkle = now;
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        s.style.left = mx + 'px'; s.style.top = my + 'px';
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 800);
+      }
+    });
+    (function animRing() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+    document.addEventListener('mousedown', () => document.body.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => document.body.classList.remove('clicking'));
+
+    // ── Stars ──
+    ['✦','✧','✶','⭑','⭒'].forEach((p, i) => {
+      const el = document.createElement('div');
+      el.className = 'petal'; el.innerHTML = p;
+      el.style.left = (Math.random() * 100) + 'vw';
+      el.style.animationDuration = (Math.random() * 4 + 5) + 's';
+      el.style.animationDelay    = (Math.random() * 7) + 's';
+      el.style.opacity = (Math.random() * 0.4 + 0.2).toFixed(2);
+      document.body.appendChild(el);
+    });
+
+    // ══ HTML5 Audio Player ══
+    function fmt(ms) {
+      const s = Math.floor(ms / 1000);
+      const m = Math.floor(s / 60), sec = s % 60;
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function setStatus(txt) { 
+      document.getElementById('statusPill').textContent = txt; 
+    }
+
+    function updateVolSlider(v) {
+      document.getElementById('volSlider').style.background =
+        `linear-gradient(to right,#ddd ${v}%,rgba(255,255,255,0.15) ${v}%)`;
+    }
+
+    function loadTrack(idx) {
+      if (idx < 0 || idx >= playlist.length) return;
+      currentTrackIdx = idx;
+      const track = playlist[idx];
+      
+      audio.src = track.url;
+      document.getElementById('songTitle').textContent = track.title;
+      document.getElementById('songArtist').textContent = track.artist;
+      document.getElementById('albumArt').src = track.art;
+      document.getElementById('totalTime').textContent = fmt(track.duration * 1000);
+      
+      // Actualizar pista activa en la lista
+      document.querySelectorAll('.track-item').forEach((t, i) => {
+        t.classList.toggle('active', i === idx);
+      });
+    }
+
+    window.addEventListener('load', function () {
+      // Cargar primera pista
+      loadTrack(0);
+      audio.volume = 0.7;
+      updateVolSlider(70);
+      setStatus('');
+
+      // Event listeners del audio
+      audio.addEventListener('play', () => {
+        isPlaying = true;
+        document.getElementById('btnPlay').innerHTML = '&#9646;&#9646;';
+        document.getElementById('albumArt').classList.add('spinning');
+        setStatus('Merge..');
+      });
+
+      audio.addEventListener('pause', () => {
+        isPlaying = false;
+        document.getElementById('btnPlay').innerHTML = '&#9654;';
+        document.getElementById('albumArt').classList.remove('spinning');
+        setStatus('Pauza');
+      });
+
+      audio.addEventListener('ended', () => {
+        isPlaying = false;
+        document.getElementById('btnPlay').innerHTML = '&#9654;';
+        document.getElementById('albumArt').classList.remove('spinning');
+        setStatus('Terminat');
+        if (repeatOn) {
+          audio.currentTime = 0;
+          audio.play();
+        } else {
+          scNext();
+        }
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('currentTime').textContent = fmt(audio.currentTime * 1000);
+      });
+
+      audio.addEventListener('durationchange', () => {
+        document.getElementById('totalTime').textContent = fmt(audio.duration * 1000);
+      });
+
+      // Click en pistas de la lista
+      document.querySelectorAll('.track-item').forEach((item, idx) => {
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', () => {
+          loadTrack(idx);
+          audio.play();
+        });
+      });
+    });
+
+    function togglePlay() {
+      if (audio.src) {
+        if (isPlaying) audio.pause();
+        else audio.play();
+      }
+    }
+
+    function seekTo(e) {
+      if (!audio.src || !audio.duration) return;
+      const rect = document.getElementById('progressWrap').getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audio.currentTime = pct * audio.duration;
+    }
+
+    function setVolume(v) {
+      audio.volume = parseInt(v) / 100;
+      updateVolSlider(v);
+    }
+
+    function scPrev() { 
+      if (currentTrackIdx > 0) {
+        loadTrack(currentTrackIdx - 1);
+        audio.play();
+      }
+    }
+
+    function scNext() { 
+      if (currentTrackIdx < playlist.length - 1) {
+        loadTrack(currentTrackIdx + 1);
+        audio.play();
+      }
+    }
+
+    function toggleShuffle() {
+      shuffleOn = !shuffleOn;
+      document.getElementById('btnShuffle').classList.toggle('active-ctrl', shuffleOn);
+    }
+
+    function toggleRepeat() {
+      repeatOn = !repeatOn;
+      document.getElementById('btnRepeat').classList.toggle('active-ctrl', repeatOn);
+    }
+
+    function toggleLike() {
+      liked = !liked;
+      const b = document.getElementById('btnLike');
+      b.innerHTML = liked ? '&#9829;' : '&#9825;';
+      b.classList.toggle('liked', liked);
+    }
+
+    // Init volume slider gradient
+    updateVolSlider(70);
+	
+	
+	// ── LIGHTBOX GALERIE ──
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const closeBtn = document.getElementById('lightbox-close');
+
+// click pe imagine
+document.querySelectorAll('.gallery-item img').forEach(img => {
+  img.addEventListener('click', () => {
+    lightbox.style.display = 'flex';
+    lightboxImg.src = img.src;
+  });
+});
+
+// inchidere X
+closeBtn.onclick = () => {
+  lightbox.style.display = 'none';
+};
+
+// click in afara imaginii
+lightbox.addEventListener('click', (e) => {
+  if (e.target !== lightboxImg) {
+    lightbox.style.display = 'none';
+  }
+});
+  </script>
+</body>
+</html>
